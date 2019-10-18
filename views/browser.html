@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset="utf-8" />
+   <title>{{browser.name}} {{browser.version}}</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<style>
+   html,
+   body {
+      margin: 0;
+      background-color: #090909;
+      font-family: consolas;
+      color: #FAFAFA;
+   }
+
+   .center {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 40vh;
+      width: 40rem;
+      font-size: 1rem;
+      display: block;
+   }
+
+   .browsers {
+      display: -ms-grid;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      -ms-grid-columns: 1fr 1fr;
+   }
+
+   .browsers div {
+      text-align: center;
+      cursor: pointer;
+   }
+
+   .browsers div img {
+      height: auto;
+      width: 10rem;
+   }
+
+   .links {
+      -ms-grid-column: 1;
+      grid-column: 1 / 2;
+      -ms-grid-row: 1;
+      -ms-grid-column-span: 1;
+      grid-row: 1;
+   }
+
+   .rechts {
+      -ms-grid-column: 2;
+      grid-column: 2 / 3;
+      -ms-grid-row: 1;
+      -ms-grid-column-span: 1;
+      grid-row: 1;
+   }
+</style>
+
+<body>
+   <main class="center">
+      <p>Sie benutzen {{browser.name}} Version {{browser.version}}</p>
+      <p>Machen Sie sich selber einen Gefallen und steigen Sie auf einen aktuellen Webbrowser um. Klicken Sie dazu
+         einfach
+         auf den Browser ihrer Wahl und Sie werden zur jeweiligen offiziellen Downloadseite weitergeleitet</p>
+      <div class="browsers">
+         <div class="links" onclick="window.location='https://www.mozilla.org/de/firefox/download/thanks/';">
+            <img src="../pictures/download_firefox.png">
+            <p>Firefox</p>
+         </div>
+         <div class="rechts" onclick="window.location='https://www.google.com/intl/de_ALL/chrome/';">
+            <img src="../pictures/download_chrome.png">
+            <p>Google Chrome</p>
+         </div>
+      </div>
+   </main>
+</body>
+
+</html>
