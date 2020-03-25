@@ -5,10 +5,16 @@ services:
   db:
     image: postgres
     container_name: mywebsite-db
+    restart: always
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./db_data:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
     environment: 
+      - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    ports: 
+      - 5432:5432
 
   mywebsite-backend:
     hostname: localhost
@@ -19,9 +25,13 @@ services:
     depends_on:
       - db
     environment:
-      - database
       - jwtPrivateKey
       - mail_host
       - mail_port
       - mail_user
       - mail_password
+      - PGHOST
+      - PGUSER
+      - PGDATABASE
+      - PGPASSWORD
+      - PGPORT
