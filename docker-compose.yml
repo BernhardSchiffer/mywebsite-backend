@@ -1,16 +1,27 @@
 version: "3.3"
 
 services:
+
+  db:
+    image: postgres
+    container_name: mywebsite-db
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment: 
+      - POSTGRES_PASSWORD
+
   mywebsite-backend:
     hostname: localhost
     container_name: mywebsite-backend
     build: .
     ports:
-      - 80:80
+      - 8080:80
+    depends_on:
+      - db
     environment:
-      - funzt_database
-      - funzt_jwtPrivateKey
-      - funzt_mail_host
-      - funzt_mail_port
-      - funzt_mail_user
-      - funzt_mail_password
+      - database
+      - jwtPrivateKey
+      - mail_host
+      - mail_port
+      - mail_user
+      - mail_password

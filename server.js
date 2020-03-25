@@ -21,13 +21,13 @@ app.use(cors());
 console.log("Application Name: " + config.get("name"));
 console.log("Mail Server " + config.get("mail.host"));
 
-if (!config.get("jwtPrivateKey")) {
+if (!process.env.jwtPrivateKey) {
   console.log("FATAL ERROR: jwtPrivateKey is not defined.");
   process.exit(1);
 }
 
 mongoose
-  .connect(config.get("database"), { useNewUrlParser: true })
+  .connect(process.env.database, { useNewUrlParser: true })
   .then(() => console.log("connected to MongoDB..."))
   .catch(err => console.log(err));
 
@@ -45,7 +45,7 @@ app.use("/api/users", users);
 app.use("/api/auth", auth);
 app.use("/api/question", forms);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
