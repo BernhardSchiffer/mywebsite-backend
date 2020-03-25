@@ -40,4 +40,4 @@ Thumbs.db
 
 old/*
 .env
-/db
+/db_data
