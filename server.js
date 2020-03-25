@@ -6,14 +6,13 @@ const browser = require("./middleware/browserDetect");
 const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const mongoose = require("mongoose");
-const mustacheExpress = require("mustache-express");
 const registrations = require("./routes/registrations");
 const forms = require("./routes/forms");
 const users = require("./routes/users");
 const auth = require("./routes/auth");
 const zeltlager = require("./routes/zeltlager");
 const cors = require("cors");
+const { Client } = require("pg");
 
 const app = express();
 app.use(cors());
@@ -26,10 +25,12 @@ if (!process.env.jwtPrivateKey) {
   process.exit(1);
 }
 
-mongoose
-  .connect(process.env.database, { useNewUrlParser: true })
-  .then(() => console.log("connected to MongoDB..."))
-  .catch(err => console.log(err));
+const client = new Client();
+
+client
+  .connect()
+  .then(() => console.log('connected to postgres ...'))
+  .catch(err => console.error('connection error', err.stack));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
