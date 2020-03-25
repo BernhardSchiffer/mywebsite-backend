@@ -2,9 +2,9 @@ const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 
 class User {
-   constructor(name, email, password, roles) {
-      this.name = name;
+   constructor(email, name, password, roles) {
       this.email = email;
+      this.name = name;
       this.password = password;
       this.roles = roles;
    }
