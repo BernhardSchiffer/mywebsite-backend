@@ -40,11 +40,11 @@ app.use(morgan("tiny"));
 app.use(browser);
 app.use(getUser);
 
-app.use("/api/zeltlager", zeltlager);
-app.use("/api/registration", registrations);
-app.use("/api/users", users);
-app.use("/api/auth", auth);
-app.use("/api/question", forms);
+app.use("/zeltlager", zeltlager);
+app.use("/registration", registrations);
+app.use("/users", users);
+app.use("/auth", auth);
+app.use("/question", forms);
 
 const port = process.env.PORT || 80;
 app.listen(port, () => {
