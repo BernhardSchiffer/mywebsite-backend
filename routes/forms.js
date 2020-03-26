@@ -1,19 +1,17 @@
-const {Message, validate} = require('../models/message');
+const { Message } = require('../models/message');
 const express = require('express');
+const Joi = require('joi');
 const router = express.Router();
-const db = require('../db')
-
-const insertStatement = 'insert into messages (topic, useremail, username, message) values ($1, $2, $3, $4);';
 
 router.post('/zeltlager',async (req, res) =>
 {
-   const { error } = validate(req.body);
+   const { error } = validateMessage(req.body);
    if(error)
    {
       return res.status(400).send(error.details[0].message);
    }
 
-   let msg = new Message(
+   const msg = new Message(
       'zeltlager',
       req.body.email,
       req.body.name,
@@ -22,7 +20,7 @@ router.post('/zeltlager',async (req, res) =>
 
    try
    {
-      const res = await db.query(insertStatement, [msg.subject, msg.useremail, msg.username, msg.message]);
+      await msg.save();
    }
    catch(exception)
    {
@@ -35,13 +33,13 @@ router.post('/zeltlager',async (req, res) =>
 router.post('/contactform',async (req, res) =>
 {
 
-   const { error } = validate(req.body);
+   const { error } = validateMessage(req.body);
    if(error)
    {
       return res.status(400).send(error.details[0].message);
    }
 
-   let msg = new Message(
+   const msg = new Message(
       req.body.subject,
       req.body.email,
       req.body.name,
@@ -50,7 +48,7 @@ router.post('/contactform',async (req, res) =>
 
    try
    {
-      const res = await db.query(insertStatement, [msg.subject, msg.useremail, msg.username, msg.message]);
+      await msg.save();
    }
    catch(exception)
    {
@@ -60,5 +58,18 @@ router.post('/contactform',async (req, res) =>
 
    res.status(200).send();
 });
+
+function validateMessage(question)
+{
+   const schema =
+   {
+      subject: Joi.string(),
+      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      question: Joi.string().required()
+   };
+
+   return Joi.validate(question, schema);
+}
 
 module.exports = router;

@@ -1,5 +1,7 @@
-const Joi = require('joi');
 const jwt = require('jsonwebtoken');
+const db = require('../db');
+
+const insertStatement = 'insert into users (email, name, hash, roles) values ($1, $2, $3, $4) returning email, name, roles;'
 
 class User {
    constructor(email, name, password, roles) {
@@ -13,18 +15,11 @@ class User {
       const token = jwt.sign({ name: this.name, email: this.email, roles: this.roles }, process.env.jwtPrivateKey);
       return token;
    }
-}
 
-function validate(user) {
-   const schema = 
-   {
-      name: Joi.string().min(5).max(50).required(),
-      email: Joi.string().min(5).max(255).required().email(),
-      password: Joi.string().min(5).max(255).required()
-   };
-
-   return Joi.validate(user, schema);
+   async save() {
+      const result = await db.query(insertStatement, [this.email, this.name, this.password, this.roles])
+      console.log(result.rows[0]);
+   }
 }
 
 exports.User = User;
-exports.validate = validate;

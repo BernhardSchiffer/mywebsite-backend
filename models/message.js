@@ -1,4 +1,6 @@
-const Joi = require('joi');
+const db = require('../db')
+
+const insertStatement = 'insert into messages (topic, useremail, username, message) values ($1, $2, $3, $4);';
 
 class Message {
    constructor(subject, useremail, username, message) {
@@ -7,21 +9,9 @@ class Message {
       this.username = username;
       this.message = message;
    }
-
-}
-
-function validate(question)
-{
-   const schema =
-   {
-      subject: Joi.string().required(),
-      name: Joi.string().required(),
-      email: Joi.string().email().required(),
-      question: Joi.string().required()
-   };
-
-   return Joi.validate(question, schema);
+   async save() {
+      await db.query(insertStatement, [this.subject, this.useremail, this.username, this.message]);
+   }
 }
 
 exports.Message = Message;
-exports.validate = validate;
