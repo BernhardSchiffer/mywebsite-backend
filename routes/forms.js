@@ -1,6 +1,8 @@
 const { Message } = require('../models/message');
 const express = require('express');
 const Joi = require('joi');
+const htmlGenerator = require('../handler/htmlGenerator');
+const mail = require('../handler/mail');
 const router = express.Router();
 
 router.post('/zeltlager',async (req, res) =>
@@ -26,6 +28,16 @@ router.post('/zeltlager',async (req, res) =>
    {
       console.log(exception);
    }
+
+   // build Email
+   const emailHTML = await htmlGenerator('contactmail', msg);
+
+   await mail.send({
+      from: 'dpsg-otto <info@dpsg-otto.de>',
+      to: msg.useremail,
+      subject: 'Frage Zeltlager 2019',
+      emailHTML: emailHTML
+   });
 
    res.status(200).send();
 });
@@ -55,6 +67,16 @@ router.post('/contactform',async (req, res) =>
       console.log(exception);
       return res.status(500).send('something went wrong.');
    }
+
+   // build Email
+   const emailHTML = await htmlGenerator('contactmail', msg);
+
+   await mail.send({
+      from: 'info@schiffer.dev',
+      to: msg.useremail,
+      subject: msg.subject,
+      emailHTML: emailHTML
+   });
 
    res.status(200).send();
 });
