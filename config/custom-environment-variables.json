@@ -1,8 +1,0 @@
-{
-   "database": "funzt_database",
-   "jwtPrivateKey": "funzt_jwtPrivateKey",
-   "mailHost": "funzt_mail_host",
-   "mailPort": "funzt_mail_port",
-   "mailUser": "funzt_mail_user",
-   "mailPassword": "funzt_mail_password"
-}

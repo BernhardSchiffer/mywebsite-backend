@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const config = require('config');
 const htmlToText = require('html-to-text');
 const Mustache = require('mustache');
 const mustache = require('mustache-express');
@@ -8,11 +7,11 @@ const htmlGenerator = require('./htmlGenerator');
 const pdfGenerator = require('./pdfGenerator');
 
 const transport = nodemailer.createTransport({
-   host: config.get('mailHost'),
-   port: config.get('mailPort'),
+   host: process.env.mailHost,
+   port: process.env.mailPort,
    auth: {
-      user: config.get('mailUser'),
-      pass: config.get('mailPassword')
+      user: process.env.mailUser,
+      pass: process.env.mailPassword
    }
 });
 

@@ -1,9 +1,11 @@
 const { User, validate } = require('../models/user');
 const express = require('express');
-const mongoose = require('mongoose');
+const db = require('../db')
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
+
+const insertStatement = 'insert into users (email, name, hash, roles) values ($1, $2, $3, $4) returning email, name, roles;'
 
 //Registrieren eines neuen Benutzers
 router.post('/', async (req, res) => {
@@ -12,23 +14,29 @@ router.post('/', async (req, res) => {
       return res.status(400).send(error.details[0].message);
    }
 
-   let user = await User.findOne({ email: req.body.email });
-   if (user) {
-      return res.status(400).send('User already registered.');
-   }
-
-   user = new User(req.body, _.pick(['name', 'email', 'password']));
-   user.roles = 'user';
+   const user = new User(
+      req.body.email, 
+      req.body.name, 
+      req.body.password, 
+      ['user']
+   );
 
    try {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(user.password, salt);
 
-      user = await user.save();
-   }
-   catch (exception) {
-      console.log(exception);
-   }
+      const res = await db.query(insertStatement, [user.email, user.name, user.password, user.roles])
+      console.log(res.rows[0])
+    } catch (err) {
+      if(err.code == 23505) {
+         return res.status(400).send('User already registered.');
+      }
+      else {
+         console.log(err);
+         return res.status(500).send('something went wrong.');
+      }
+    }
+
    const token = user.generateAuthToken();
 
    //sending an email to verify the users email address

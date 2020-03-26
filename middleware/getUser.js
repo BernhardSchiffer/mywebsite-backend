@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const cookie = require('cookie');
 
 function getUser(req, res, next)
@@ -15,7 +14,7 @@ function getUser(req, res, next)
 
    try
    {
-      const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
+      const decoded = jwt.verify(token, process.env.jwtPrivateKey);
       req.user = decoded;
       next();
    }

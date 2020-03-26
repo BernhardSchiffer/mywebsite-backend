@@ -1,16 +1,37 @@
 version: "3.3"
 
 services:
+
+  db:
+    image: postgres
+    container_name: mywebsite-db
+    restart: always
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
+    environment: 
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    ports: 
+      - 5432:5432
+
   mywebsite-backend:
     hostname: localhost
     container_name: mywebsite-backend
     build: .
     ports:
-      - 80:80
+      - 8080:80
+    depends_on:
+      - db
     environment:
-      - funzt_database
-      - funzt_jwtPrivateKey
-      - funzt_mail_host
-      - funzt_mail_port
-      - funzt_mail_user
-      - funzt_mail_password
+      - jwtPrivateKey
+      - mail_host
+      - mail_port
+      - mail_user
+      - mail_password
+      - PGHOST
+      - PGUSER
+      - PGDATABASE
+      - PGPASSWORD
+      - PGPORT
