@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const authentication = require("./middleware/auth");
 const getUser = require("./middleware/getUser");
 const browser = require("./middleware/browserDetect");
@@ -12,7 +11,6 @@ const users = require("./routes/users");
 const auth = require("./routes/auth");
 const zeltlager = require("./routes/zeltlager");
 const cors = require("cors");
-const { Client } = require("pg");
 
 const app = express();
 app.use(cors());
@@ -24,13 +22,6 @@ if (!process.env.jwtPrivateKey) {
   console.log("FATAL ERROR: jwtPrivateKey is not defined.");
   process.exit(1);
 }
-
-const client = new Client();
-
-client
-  .connect()
-  .then(() => console.log('connected to postgres ...'))
-  .catch(err => console.error('connection error', err.stack));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,7 +35,7 @@ app.use("/zeltlager", zeltlager);
 app.use("/registration", registrations);
 app.use("/users", users);
 app.use("/auth", auth);
-app.use("/question", forms);
+app.use("/forms", forms);
 
 const port = process.env.PORT || 80;
 app.listen(port, () => {
