@@ -33,8 +33,8 @@ router.post('/zeltlager',async (req, res) =>
    const emailHTML = await htmlGenerator('contactmail', msg);
 
    await mail.send({
-      from: 'dpsg-otto <info@dpsg-otto.de>',
-      to: msg.useremail,
+      from: msg.useremail,
+      to: 'dpsg-otto <info@dpsg-otto.de>',
       subject: 'Frage Zeltlager 2019',
       emailHTML: emailHTML
    });
@@ -72,8 +72,8 @@ router.post('/contactform',async (req, res) =>
    const emailHTML = await htmlGenerator('contactmail', msg);
 
    await mail.send({
-      from: 'info@schiffer.dev',
-      to: msg.useremail,
+      from: msg.useremail,
+      to: 'info@schiffer.dev',
       subject: msg.subject,
       emailHTML: emailHTML
    });
