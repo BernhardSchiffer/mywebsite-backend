@@ -1,34 +1,36 @@
-const { Registration, validate } = require('../models/registration');
+const { Registration } = require('../models/registration');
 const express = require('express');
-const mongoose = require('mongoose');
+const Joi = require('joi');
+const htmlGenerator = require('../handler/htmlGenerator');
+const pdfGenerator = require('../handler/pdfGenerator');
 const router = express.Router();
 const mail = require('../handler/mail');
 
 router.post('/', async (req, res) => {
    //Eingabe validieren
-   const { error } = validate(req.body);
+   const { error } = validateRegistration(req.body);
    if (error) {
       return res.status(400).send(error.details[0].message);
    }
 
-   let registration = new Registration({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      birthday: req.body.birthday,
-      address: req.body.address,
-      postcode: req.body.postcode,
-      city: req.body.city,
-      telefon: req.body.telefon,
-      email: req.body.email,
-      medicine: req.body.medicine,
-      insurant: req.body.insurant,
-      insurance: req.body.insurance,
-      canSwim: req.body.canSwim,
-      VegetarianOrVegan: req.body.VegetarianOrVegan,
-      misc: req.body.misc,
-      passengersArrival: req.body.passengersArrival,
-      passengersDeparture: req.body.passengersDeparture
-   });
+   let registration = new Registration(
+      req.body.firstname,
+      req.body.lastname,
+      req.body.birthday,
+      req.body.telefon,
+      req.body.email,
+      req.body.address,
+      req.body.postcode,
+      req.body.city,
+      req.body.medicine,
+      req.body.insurant,
+      req.body.insurance,
+      req.body.canSwim,
+      req.body.VegetarianOrVegan,
+      req.body.misc,
+      req.body.passengersArrival,
+      req.body.passengersDeparture
+   );
 
    try {
       //Anmeldung in Datenbank schreiben
@@ -93,19 +95,49 @@ router.post('/', async (req, res) => {
       passengersDeparture: departure
    }
 
+   // build Email
+   const emailHTML = await htmlGenerator('registrationmail', registrationMail);
+
+   // build Attachment
+   const attachmentHTML = await htmlGenerator('registrationattachment', registrationMail)
+   const pdf = await pdfGenerator(attachmentHTML);
+
    await mail.send({
-      emailTemplate: 'registrationmail',
-      attachmentTemplate: 'registrationattachment',
+      from: 'dpsg-otto <info@dpsg-otto.de>',
+      to: registration.email,
       subject: 'Anmeldung Zeltlager 2019',
-      from: 'dpsg-otto <info@dpsg-otto.de',
-      user: {
-         email: registration.email
-      },
-      registration: registrationMail,
-      attachmentName: 'Anmeldung.pdf'
+      emailHTML: emailHTML,
+      attachments: [{
+         content: pdf,
+         filename: 'Anmeldung.pdf'
+      }]
    });
 
    res.send(JSON.stringify(registration));
 });
+
+function validateRegistration(registration) {
+   const schema =
+   {
+      firstname: Joi.string().required(),
+      lastname: Joi.string().required(),
+      birthday: Joi.date().less('1-1-2013').required(),
+      telefon: Joi.string().required(),
+      email: Joi.string().email().required(),
+      address: Joi.string().required(),
+      postcode: Joi.number().max(99999).min(10000).required(),
+      city: Joi.string().required(),
+      medicine: Joi.string().optional().allow(''),
+      insurant: Joi.string().required(),
+      insurance: Joi.string().required(),
+      canSwim: Joi.boolean().required(),
+      VegetarianOrVegan: Joi.string(),
+      misc: Joi.string().optional().allow(''),
+      passengersArrival: Joi.number().min(0).max(10),
+      passengersDeparture: Joi.number().min(0).max(10)
+   };
+
+   return Joi.validate(registration, schema);
+}
 
 module.exports = router;
