@@ -13,7 +13,7 @@ const zeltlager = require("./routes/zeltlager");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+app.use(cors({exposedHeaders: ["x-auth-token"]}));
 
 console.log("Application Name: " + config.get("name"));
 console.log("Mail Server " + config.get("mail.host"));
