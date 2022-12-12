@@ -21,7 +21,7 @@
       "cookie": "^0.4.0",
       "cors": "^2.8.5",
       "dom-confetti": "^0.1.1",
-      "express": "^4.17.1",
+      "express": "^4.17.3",
       "helmet": "^3.22.0",
       "html-to-text": "^5.1.1",
       "joi": "^14.3.1",
